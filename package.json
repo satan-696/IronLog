@@ -1,0 +1,10 @@
+{
+  "name": "ironlog-monorepo",
+  "private": true,
+  "workspaces": ["shared", "server", "web", "app"],
+  "scripts": {
+    "server": "cd server && npm run dev",
+    "web": "cd web && npm run dev",
+    "app": "cd app && npx react-native start"
+  }
+}

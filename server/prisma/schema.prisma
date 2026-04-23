@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String   @id @default(uuid())
+  username            String   @unique
+  passwordHash        String
+  name                String
+  gender              String?
+  age                 Int?
+  heightCm            Float?
+  weightKg            Float?
+  goal                String?
+  activityLevel       String?
+  maintenanceCalories Int?
+  dailyCalorieTarget  Int?
+  mealTrackingEnabled Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  daySchedules    DaySchedule[]
+  workoutLogs     WorkoutLog[]
+  mealLogs        MealLog[]
+  weightLogs      WeightLog[]
+  customExercises CustomExercise[]
+}
+
+model WeightLog {
+  id        String   @id @default(uuid())
+  userId    String
+  weightKg  Float
+  dateKey   String
+  loggedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dateKey])
+}
+
+model DaySchedule {
+  id           String   @id @default(uuid())
+  userId       String
+  dayIndex     Int
+  type         String   @default("rest")
+  muscleGroups String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises Exercise[]
+
+  @@unique([userId, dayIndex])
+}
+
+model Exercise {
+  id          String  @id @default(uuid())
+  scheduleId  String
+  name        String
+  muscleGroup String
+  sets        Int     @default(3)
+  targetReps  String  @default("8-12")
+  sortOrder   Int     @default(0)
+  notes       String?
+
+  schedule    DaySchedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  workoutLogs WorkoutLog[]
+}
+
+model WorkoutLog {
+  id           String   @id @default(uuid())
+  userId       String
+  exerciseId   String?
+  exerciseName String   @default("")
+  weekKey      String
+  dayIndex     Int
+  setNumber    Int
+  weightKg     Float?
+  reps         Int?
+  completed    Boolean  @default(false)
+  loggedAt     DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise Exercise? @relation(fields: [exerciseId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, exerciseId, weekKey, dayIndex, setNumber])
+}
+
+model MealLog {
+  id       String   @id @default(uuid())
+  userId   String
+  dateKey  String
+  mealType String
+  foodName String
+  quantity Float
+  unit     String
+  calories Float
+  proteinG Float    @default(0)
+  carbsG   Float    @default(0)
+  fatG     Float    @default(0)
+  loggedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CustomExercise {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  muscleGroup String
+  isCompound  Boolean  @default(false)
+  difficulty  String   @default("beginner")
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+}

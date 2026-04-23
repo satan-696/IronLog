@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ironlog-server
+    env: node
+    plan: free
+    buildCommand: >
+      npm install --include-workspace-root &&
+      npm run build -w @ironlog/web &&
+      npm run db:generate -w @ironlog/server
+    startCommand: npm start -w @ironlog/server
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ironlog-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        value: https://ironlog-server.onrender.com
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: ironlog-db
+    databaseName: ironlog
+    plan: free
