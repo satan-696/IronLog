@@ -25,6 +25,7 @@ const PORT = process.env.PORT || 3001;
 // ---- CORS (Issue 12 fix) ----
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  'https://ironlog-server-tohk.onrender.com',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
