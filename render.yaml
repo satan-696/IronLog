@@ -6,7 +6,8 @@ services:
     buildCommand: >
       npm install --production=false &&
       npm run build -w @ironlog/web &&
-      npm run db:generate -w @ironlog/server
+      npm run db:generate -w @ironlog/server &&
+      npm run db:migrate -w @ironlog/server
     startCommand: npm start -w @ironlog/server
     envVars:
       - key: DATABASE_URL
