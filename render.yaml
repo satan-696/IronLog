@@ -4,7 +4,7 @@ services:
     env: node
     plan: free
     buildCommand: >
-      npm install --include=dev &&
+      npm install --production=false &&
       npm run build -w @ironlog/web &&
       mkdir -p server/web-dist &&
       cp -r web/dist/* server/web-dist/ &&
