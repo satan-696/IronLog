@@ -53,14 +53,18 @@ app.use('/api/workout-logs',    workoutLogsRouter);
 app.use('/api/meal-logs',       mealLogsRouter);
 app.use('/api/weight-logs',     weightLogsRouter);
 
+// Test route to verify server control
+app.get('/api/ping', (req, res) => res.send('IronLog API is alive!'));
+
 // ---- Serve Web Build in Production (Issue 11 fix) ----
-// __dirname = server/src/  →  ../web-dist = server/web-dist/
+const webDistPath = path.join(__dirname, '../web-dist');
 if (process.env.NODE_ENV === 'production') {
-  const webDistPath = path.join(__dirname, '../web-dist');
   app.use(express.static(webDistPath));
   app.get('*', (req, res) => {
     res.sendFile('index.html', { root: webDistPath });
   });
+} else {
+  app.get('/', (req, res) => res.send('IronLog Server is running in DEVELOPMENT mode. Static files are not served here.'));
 }
 
 // ---- Global Error Handler (must be last) ----
