@@ -4,8 +4,10 @@ services:
     env: node
     plan: free
     buildCommand: >
-      npm install --include-workspace-root &&
+      npm install --include=dev &&
       npm run build -w @ironlog/web &&
+      mkdir -p server/web-dist &&
+      cp -r web/dist/* server/web-dist/ &&
       npm run db:generate -w @ironlog/server
     startCommand: npm start -w @ironlog/server
     envVars:
